@@ -22,7 +22,6 @@
     .card{background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.015));padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);min-height:88px;display:flex;flex-direction:column;justify-content:space-between}
     .card h3{margin:0 0 6px;font-size:15px}
     .card p{margin:0;font-size:13px;color:var(--muted)}
-    .tag{font-size:12px;padding:6px 8px;border-radius:999px;background:rgba(125,211,252,0.08);display:inline-block;color:var(--accent);border:1px solid rgba(125,211,252,0.06)}
     footer{color:var(--muted);font-size:13px;margin-top:22px;text-align:center}
 
     @media (max-width:560px){.wrap{padding:16px}input.search{min-width:140px}}
@@ -55,7 +54,7 @@
   <script>
     // data: add / edit entries here. href is relative to repo root.
     const entries = [
-      {title: "will's formatter", desc: 'this aussie bot loves to have a yarn', tag: 'tools', href: 'tools/formatter.html'},
+      {title: "will's formatter", desc: 'this aussie bot loves to have a yarn', href: 'tools/formatter.html'},
     ];
 
     const grid = document.getElementById('grid');
@@ -78,12 +77,9 @@
 
         const h = document.createElement('h3'); h.textContent = e.title;
         const p = document.createElement('p'); p.textContent = e.desc;
-        const tag = document.createElement('div'); tag.className='tag'; tag.textContent = e.tag;
 
         a.appendChild(h);
         a.appendChild(p);
-        a.appendChild(tag);
-
         grid.appendChild(a);
       });
     }
@@ -92,9 +88,9 @@
       const q = search.value.trim().toLowerCase();
       const f = filter.value;
       const filtered = entries.filter(e => {
-        if(f !== 'all' && e.tag !== f) return false;
+        if(f !== 'all') return false;
         if(!q) return true;
-        return (e.title + ' ' + e.desc + ' ' + e.tag).toLowerCase().includes(q);
+        return (e.title + ' ' + e.desc).toLowerCase().includes(q);
       });
       render(filtered);
     }
