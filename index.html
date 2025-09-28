@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>will's gadgets</title>
+  <meta name="description" content="landing hub for gadgets repo: tools, hacking notes, snippets">
+  <style>
+    :root{--bg:#0f1724;--card:#0b1220;--muted:#9aa4b2;--accent:#7dd3fc}
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;color:#e6eef6;background:linear-gradient(180deg,#071022 0%,#0f1724 100%)}
+    .wrap{max-width:1000px;margin:36px auto;padding:24px}
+    header{display:flex;gap:18px;align-items:center;justify-content:space-between}
+    h1{margin:0;font-size:20px}
+    p.lead{margin:6px 0 0;color:var(--muted);font-size:13px}
+
+    .controls{display:flex;gap:12px;align-items:center}
+    input.search{padding:10px 12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.03);outline:none;border-radius:8px;color:inherit;min-width:240px}
+    select{padding:10px;border-radius:8px;background:rgba(255,255,255,0.02);color:inherit;border:1px solid rgba(255,255,255,0.03)}
+
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-top:22px}
+    .card{background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.015));padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);min-height:88px;display:flex;flex-direction:column;justify-content:space-between}
+    .card h3{margin:0 0 6px;font-size:15px}
+    .card p{margin:0;font-size:13px;color:var(--muted)}
+    .tag{font-size:12px;padding:6px 8px;border-radius:999px;background:rgba(125,211,252,0.08);display:inline-block;color:var(--accent);border:1px solid rgba(125,211,252,0.06)}
+    footer{color:var(--muted);font-size:13px;margin-top:22px;text-align:center}
+
+    @media (max-width:560px){.wrap{padding:16px}input.search{min-width:140px}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>will's gadgets</h1>
+        <p class="lead">tools, hacking notes & tiny snippets</p>
+      </div>
+
+      <div class="controls">
+        <input id="search" class="search" placeholder="search tools, snippets, hacks..." autocomplete="off" />
+        <select id="filter">
+          <option value="all">show: all</option>
+          <option value="tools">tools</option>
+          <option value="hacking">hacking</option>
+          <option value="snippets">snippets</option>
+        </select>
+      </div>
+    </header>
+
+    <main>
+      <div id="grid" class="grid" aria-live="polite"></div>
+    </main>
+  </div>
+
+  <script>
+    // data: add / edit entries here. href is relative to repo root.
+    const entries = [
+      {title: "will's formatter", desc: 'this aussie bot loves to have a yarn', tag: 'tools', href: 'formatter.html'},
+    ];
+
+    const grid = document.getElementById('grid');
+    const search = document.getElementById('search');
+    const filter = document.getElementById('filter');
+
+    function render(list){
+      grid.innerHTML = '';
+      if(!list.length){
+        grid.innerHTML = '<div style="grid-column:1/-1;color:var(--muted);padding:18px;background:transparent;border-radius:8px">no matches — try different words</div>';
+        return;
+      }
+
+      list.forEach(e=>{
+        const a = document.createElement('a');
+        a.href = e.href;
+        a.className = 'card';
+        a.style.textDecoration = 'none';
+        a.setAttribute('title', e.title + ' — ' + e.desc);
+
+        const h = document.createElement('h3'); h.textContent = e.title;
+        const p = document.createElement('p'); p.textContent = e.desc;
+        const tag = document.createElement('div'); tag.className='tag'; tag.textContent = e.tag;
+
+        a.appendChild(h);
+        a.appendChild(p);
+        a.appendChild(tag);
+
+        grid.appendChild(a);
+      });
+    }
+
+    function query(){
+      const q = search.value.trim().toLowerCase();
+      const f = filter.value;
+      const filtered = entries.filter(e => {
+        if(f !== 'all' && e.tag !== f) return false;
+        if(!q) return true;
+        return (e.title + ' ' + e.desc + ' ' + e.tag).toLowerCase().includes(q);
+      });
+      render(filtered);
+    }
+
+    // initial render
+    render(entries);
+
+    // events
+    search.addEventListener('input', ()=> query());
+    filter.addEventListener('change', ()=> query());
+
+    // keyboard: focus search on '/'
+    window.addEventListener('keydown', e=>{
+      if(e.key === '/' && document.activeElement !== search){
+        e.preventDefault(); search.focus();
+      }
+    });
+
+    // accessibility: make cards open in same tab (good for github pages)
+    // if you want them to open in a new tab, set a.target = '_blank' above.
+
+    // notes for you:
+    // - add new pages in the repo and then add an entry to `entries`.
+    // - if you want an auto-redirect instead of the landing page, replace this file with a meta refresh pointing to the desired page.
+  </script>
+</body>
+</html>
